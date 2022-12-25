@@ -18,27 +18,29 @@ builder.Services.AddDbContext<StoreContext>(options =>
 });
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped( typeof(IGenericRepository<>), typeof(GenericRepository<>) );
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
 // Data Input 
 
-using var scope = app.Services.CreateScope();
-var services = scope.ServiceProvider;
-var context = services.GetRequiredService<StoreContext>();
-var logger = services.GetRequiredService<ILogger<Program>>();
-// var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+// using var scope = app.Services.CreateScope();
+// var services = scope.ServiceProvider;
+// var context = services.GetRequiredService<StoreContext>();
+// var logger = services.GetRequiredService<ILogger<Program>>();
+// // var loggerFactory = services.GetRequiredService<ILoggerFactory>();
 
-try
-{
-    await context.Database.MigrateAsync();
-    // await StoreContextSeed.SeedAsync(context, loggerFactory);
-    await StoreContextSeed.SeedAsync(context);
-}
-catch (Exception ex)
-{
-   logger.LogError(ex, "An error occured during migration");
-}
+// try
+// {
+//     await context.Database.MigrateAsync();
+//     // await StoreContextSeed.SeedAsync(context, loggerFactory);
+//     await StoreContextSeed.SeedAsync(context);
+// }
+// catch (Exception ex)
+// {
+//    logger.LogError(ex, "An error occured during migration");
+// }
 
 // End of Data Input 
 
@@ -50,6 +52,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// app.UseRouting();
+
+app.UseStaticFiles();
 
 app.UseAuthorization();
 
